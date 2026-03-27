@@ -1,49 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Aravind Dhakuri | SOC Analyst</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #020c1b;
+    color: #00ffcc;
+}
+
+/* NAV */
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: #0d1117;
+    position: sticky;
+    top: 0;
+}
+
+nav a {
+    color: #00ffcc;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 120px 20px;
+}
+
+.hero h1 {
+    font-size: 60px;
+    text-shadow: 0 0 20px #00ffcc;
+}
+
+.hero h2 {
+    font-size: 28px;
+    margin-top: 10px;
+}
+
+/* SECTION */
+.section {
+    padding: 80px 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+/* CARDS */
+.card {
+    background: rgba(0,255,204,0.05);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #00ffcc;
+    margin-top: 20px;
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* IMAGES */
+img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* BUTTON */
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: 1px solid #00ffcc;
+    text-decoration: none;
+    color: #00ffcc;
+}
+
+.btn:hover {
+    background: #00ffcc;
+    color: black;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 40px;
+    opacity: 0.6;
+}
+</style>
+
 </head>
 <body>
 
-<nav class="nav">
-<h1>Aravind Dhakuri</h1>
+<nav>
+<h3>Aravind Dhakuri</h3>
 <div>
-<a href="index.html">Home</a>
-<a href="soc.html">SOC Story</a>
-<a href="projects.html">Projects</a>
+<a href="#about">About</a>
+<a href="#soc">SOC Work</a>
+<a href="#project">Project</a>
 </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-<h2>I Simulate Attacks → Then Detect Them</h2>
-<p>Cybersecurity Analyst | SOC | Threat Detection</p>
+<h1>I Simulate Cyber Attacks</h1>
+<h2>Then Detect Them Like a SOC Analyst</h2>
+<p>Cybersecurity | Threat Detection | Blue Team</p>
 </section>
 
-<section class="section">
-<h2>🧠 Simple Explanation</h2>
+<!-- ABOUT -->
+<section class="section" id="about">
+<h2>🧠 What I Actually Do</h2>
+
+<div class="card">
 <p>
-Think of a hacker trying to break into a system.
-I simulate that attack, monitor it, detect it, and analyze it using professional tools.
-</p>
-</section>
+Imagine a hacker trying thousands of passwords to break into a system.
 
-<section class="section">
-<h2>🚨 My Workflow</h2>
-<div class="grid">
-<div class="card">⚔️ Attack Simulation</div>
-<div class="card">📡 Packet Capture</div>
-<div class="card">🚨 Threat Detection</div>
-<div class="card">📊 Log Analysis</div>
+I simulate that attack myself, then:
+<br><br>
+✔ Capture network traffic  
+✔ Detect suspicious behavior  
+✔ Analyze logs  
+✔ Confirm the attack  
+
+This is exactly what a SOC Analyst does in real companies.
+</p>
 </div>
 </section>
 
+<!-- SOC WORKFLOW -->
+<section class="section" id="soc">
+<h2>🚨 Real SOC Workflow</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>⚔️ Attack (Hydra)</h3>
+<p>I launched brute force attacks from Kali Linux.</p>
+<img src="assets/soc/hydra.png">
+</div>
+
+<div class="card">
+<h3>📡 Wireshark</h3>
+<p>Captured suspicious packets and traffic patterns.</p>
+<img src="assets/soc/wireshark.png">
+</div>
+
+<div class="card">
+<h3>🚨 Suricata</h3>
+<p>Detected intrusion alerts based on abnormal behavior.</p>
+<img src="assets/soc/suricata.png">
+</div>
+
+<div class="card">
+<h3>📊 Wazuh</h3>
+<p>Analyzed SIEM logs and confirmed attack patterns.</p>
+<img src="assets/soc/wazuh.png">
+</div>
+
+<div class="card">
+<h3>🔍 Nmap</h3>
+<p>Scanned network to identify open ports and services.</p>
+<img src="assets/soc/nmap.png">
+</div>
+
+</div>
+</section>
+
+<!-- PROJECT -->
+<section class="section" id="project">
+<h2>💻 Featured Project</h2>
+
+<div class="card">
+<h3>SQL Injection Detection using Machine Learning</h3>
+
+<p>
+This system detects malicious SQL queries in real-time using machine learning.
+
+It classifies inputs as:
+<br><br>
+✔ Normal  
+✔ Suspicious  
+✔ Malicious  
+
+And helps prevent database attacks.
+</p>
+
+<a class="btn" href="https://mysqlidmtml.netlify.app/" target="_blank">
+View Live Project
+</a>
+
+</div>
+</section>
+
+<!-- GITHUB -->
 <section class="section">
-<h2>📊 GitHub</h2>
+<h2>📊 My Consistency</h2>
 <img src="https://github-readme-stats.vercel.app/api?username=Aravind93911&show_icons=true&theme=radical">
 </section>
+
+<footer>
+<p>Built by Aravind Dhakuri | SOC Analyst Portfolio</p>
+</footer>
 
 </body>
 </html>
