@@ -286,7 +286,7 @@
 
         .progress-line {
             width: 3px;
-            height: 180px;
+            height: 200px;
             background: rgba(255,255,255,0.08);
             border-radius: 999px;
             overflow: hidden;
@@ -524,6 +524,7 @@
             <a href="#metrics" class="progress-dot" data-section="metrics"></a>
             <a href="#operations" class="progress-dot" data-section="operations"></a>
             <a href="#history" class="progress-dot" data-section="history"></a>
+            <a href="#threats" class="progress-dot" data-section="threats"></a>
             <a href="#contact" class="progress-dot" data-section="contact"></a>
         </div>
         <div class="progress-line">
@@ -545,6 +546,7 @@
             <a href="#metrics" class="hover:text-cyan-400 transition-colors">Threat Metrics</a>
             <a href="#operations" class="hover:text-cyan-400 transition-colors">Operations</a>
             <a href="#history" class="hover:text-cyan-400 transition-colors">Service Log</a>
+            <a href="#threats" class="hover:text-cyan-400 transition-colors">Telemetry</a>
             <button id="openCaseStudyTop" class="hover:text-cyan-400 transition-colors">Case Study</button>
             <a href="https://www.linkedin.com/in/aravind-dhakuri-3a1880249/" target="_blank" class="text-white border-b-2 border-cyan-500 hover:border-cyan-400 transition-colors">Connect Profile</a>
         </div>
@@ -570,8 +572,8 @@
                     <button id="openCaseStudy" class="px-6 py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-all duration-300 shadow-lg shadow-cyan-500/20">
                         View Case Study
                     </button>
-                    <a href="#operations" class="px-6 py-3 rounded-xl border border-white/10 text-white hover:border-cyan-500/40 hover:text-cyan-400 transition-all duration-300">
-                        Explore Project
+                    <a href="https://mysqlidmtml.netlify.app/" target="_blank" class="px-6 py-3 rounded-xl border border-white/10 text-white hover:border-cyan-500/40 hover:text-cyan-400 transition-all duration-300">
+                        Live Project
                     </a>
                 </div>
             </div>
@@ -616,7 +618,7 @@
                 <div class="counter-card rounded-3xl p-8">
                     <div class="text-slate-500 text-xs uppercase tracking-[0.3em] mb-4 mono">Attack Logs Analyzed</div>
                     <div class="text-5xl font-black text-white"><span class="counter" data-target="1547">0</span><span class="text-emerald-400">+</span></div>
-                    <p class="text-slate-400 mt-3 text-sm">Real-time SOC-style visibility across suspicious requests and telemetry records.</p>
+                    <p class="text-slate-400 mt-3 text-sm">SOC-style visibility across suspicious requests and telemetry records.</p>
                 </div>
                 <div class="counter-card rounded-3xl p-8">
                     <div class="text-slate-500 text-xs uppercase tracking-[0.3em] mb-4 mono">Threats Blocked</div>
@@ -636,7 +638,10 @@
                 </div>
                 <div class="text-right mono text-xs reveal text-slate-600">
                     [ ALGORITHM: TF-IDF + RANDOM_FOREST ]<br />
-                    [ DETECTION: REGEX + LEVENSHTEIN + CONFIDENCE SCORING ]
+                    [ DETECTION: REGEX + LEVENSHTEIN + CONFIDENCE SCORING ]<br />
+                    <a href="https://mysqlidmtml.netlify.app/" target="_blank" class="inline-block mt-3 text-cyan-400 hover:text-cyan-300 transition-colors border-b border-cyan-500/30">
+                        [ VIEW LIVE PROJECT ]
+                    </a>
                 </div>
             </div>
 
@@ -683,11 +688,12 @@
         </div>
     </section>
 
+    <!-- HISTORY + SKILLS -->
     <section id="history" class="py-32 px-6">
         <div class="max-w-7xl mx-auto">
             <h2 class="big-bold text-6xl text-white mb-20 reveal">SERVICE <span class="text-slate-800">HISTORY</span></h2>
 
-            <div class="grid lg:grid-cols-2 gap-20">
+            <div class="grid lg:grid-cols-2 gap-20 mb-24">
                 <div class="reveal">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-16 h-16 bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-3xl">
@@ -699,12 +705,14 @@
                         </div>
                     </div>
                     <p class="text-slate-400 leading-relaxed font-light mb-8">
-                        Completed a high-intensity online internship focused on practical Python-based cybersecurity development. Built a Web Application Vulnerability Scanner for SQLi and XSS detection, a Password Strength Analyzer, performed network footprinting using Nmap, Whois, and Traceroute, and implemented cryptographic basics including MD5, SHA-256, and AES-256.
+                        Completed a practical cybersecurity internship focused on Python-based security tooling, web vulnerability detection, and network reconnaissance. Built a web application vulnerability scanner for SQL Injection and XSS detection, created a password strength analyzer, performed network footprinting with Nmap, Whois, and Traceroute, and studied cryptographic implementations including MD5, SHA-256, and AES-256.
                     </p>
                     <div class="flex flex-wrap gap-2">
                         <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 rounded">OWASP_TOP_10</span>
                         <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 rounded">NMAP_OPS</span>
                         <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 rounded">PYTHON_DEV</span>
+                        <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 rounded">XSS_SQLI_TESTING</span>
+                        <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 rounded">CRYPTO_BASICS</span>
                     </div>
                 </div>
 
@@ -714,18 +722,155 @@
                         <div class="space-y-12 pl-4 border-l-2 border-slate-800">
                             <div class="relative">
                                 <div class="absolute -left-[23px] top-1 w-3 h-3 bg-cyan-500 rounded-full"></div>
-                                <h4 class="text-white font-bold text-lg uppercase leading-none">B.E. — CSE (IOT)</h4>
-                                <p class="text-sm text-cyan-500 mt-2">NAWAB SHAH ALAM KHAN COLLEGE</p>
+                                <h4 class="text-white font-bold text-lg uppercase leading-none">B.E. — Computer Science & Engineering (IoT)</h4>
+                                <p class="text-sm text-cyan-500 mt-2">NAWAB SHAH ALAM KHAN COLLEGE OF ENGINEERING & TECHNOLOGY</p>
                                 <p class="text-[10px] text-slate-500 uppercase mt-1 tracking-widest">2023 - PRESENT | CGPA 7.55</p>
+                                <p class="text-sm text-slate-400 mt-4 leading-relaxed">
+                                    Focused on cybersecurity fundamentals, computer networks, web technologies, Python programming, IoT systems, and applied software engineering. Built project experience around secure web application design, machine learning-based threat detection, and SOC-oriented dashboard monitoring.
+                                </p>
                             </div>
+
                             <div class="relative">
-                                <div class="absolute -left-[23px] top-1 w-3 h-3 bg-slate-700 rounded-full"></div>
-                                <h4 class="text-white font-bold text-lg uppercase leading-none">DIPLOMA — EEE</h4>
-                                <p class="text-sm text-slate-400 mt-2">HOLY MARY INSTITUTE OF TECH</p>
+                                <div class="absolute -left-[23px] top-1 w-3 h-3 bg-emerald-500 rounded-full"></div>
+                                <h4 class="text-white font-bold text-lg uppercase leading-none">Diploma — Electrical & Electronics Engineering</h4>
+                                <p class="text-sm text-emerald-500 mt-2">HOLY MARY INSTITUTE OF TECHNOLOGY & SCIENCE</p>
                                 <p class="text-[10px] text-slate-500 uppercase mt-1 tracking-widest">2019 - 2022 | CGPA 9.1</p>
+                                <p class="text-sm text-slate-400 mt-4 leading-relaxed">
+                                    Developed strong analytical and technical foundations in circuit systems, logic, troubleshooting, hardware understanding, and disciplined engineering methodology — later applied toward computing, networking, and cyber defense domains.
+                                </p>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Skills & Tools -->
+            <div class="reveal">
+                <div class="flex items-end justify-between gap-6 mb-10 flex-wrap">
+                    <div>
+                        <span class="text-cyan-500 font-bold text-xs uppercase tracking-widest mb-3 block">Operational Capability Matrix</span>
+                        <h3 class="big-bold text-5xl text-white">SKILLS & <span class="text-cyan-500">TOOLS</span></h3>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="data-grid rounded-3xl p-6">
+                        <h4 class="text-white font-black text-lg mb-4 uppercase">Security</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">SQL Injection</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">XSS Detection</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Threat Monitoring</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Defense in Depth</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Log Analysis</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Alert Triage</span>
+                        </div>
+                    </div>
+
+                    <div class="data-grid rounded-3xl p-6">
+                        <h4 class="text-white font-black text-lg mb-4 uppercase">Tools</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Wazuh</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Suricata</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Wireshark</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Nmap</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Whois</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Traceroute</span>
+                        </div>
+                    </div>
+
+                    <div class="data-grid rounded-3xl p-6">
+                        <h4 class="text-white font-black text-lg mb-4 uppercase">Programming</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Python</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">JavaScript</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">HTML5</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">CSS3</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Node.js</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">PostgreSQL</span>
+                        </div>
+                    </div>
+
+                    <div class="data-grid rounded-3xl p-6">
+                        <h4 class="text-white font-black text-lg mb-4 uppercase">ML & Analysis</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">TF-IDF</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Random Forest</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Regex Matching</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Levenshtein Distance</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Classification Metrics</span>
+                            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-300">Dataset Labeling</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECURITY TELEMETRY SECTION -->
+    <section id="threats" class="py-32 px-6 bg-slate-950/40 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16 reveal">
+                <span class="text-cyan-500 font-bold text-xs uppercase tracking-widest mb-4 block">Operational Lab Evidence</span>
+                <h2 class="big-bold text-6xl text-white">SECURITY <span class="text-cyan-500">TELEMETRY</span></h2>
+                <p class="text-slate-400 mt-6 max-w-3xl leading-relaxed">
+                    Hands-on visibility across endpoint events, brute-force traces, packet-level inspection, and IDS alert streams using Wazuh, Suricata, and Wireshark. These screenshots reflect practical lab work involving monitoring, protocol analysis, and detection-driven security investigation.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="data-grid rounded-3xl overflow-hidden reveal">
+                    <img src="./assets/images/wiresharklogs.jpeg" alt="Wireshark logs and packet inspection" class="w-full object-cover">
+                    <div class="p-6">
+                        <h3 class="text-white font-black text-xl mb-3 uppercase">Wireshark Traffic Analysis</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Packet-level inspection and protocol visibility in Wireshark alongside terminal-based activity. Demonstrates practical traffic capture, request inspection, and investigation of communication behavior used in threat hunting and network forensics.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="data-grid rounded-3xl overflow-hidden reveal">
+                    <img src="./assets/images/suricatabruteforcelogs.jpeg" alt="Suricata brute force detection logs" class="w-full object-cover">
+                    <div class="p-6">
+                        <h3 class="text-white font-black text-xl mb-3 uppercase">Suricata Alert Stream</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Suricata IDS alert output during suspicious traffic and brute-force-style activity. Shows event correlation, protocol-level alerting, and the use of signatures to identify abnormal or hostile behavior in monitored traffic flows.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="data-grid rounded-3xl overflow-hidden reveal">
+                    <img src="./assets/images/wiresharktcp21packets.jpeg" alt="Wireshark TCP packet inspection" class="w-full object-cover">
+                    <div class="p-6">
+                        <h3 class="text-white font-black text-xl mb-3 uppercase">TCP Packet-Level Inspection</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Detailed TCP communication analysis in Wireshark, including sequence behavior and ACK traffic. Demonstrates understanding of transport-layer analysis, packet timing, and flow interpretation during network investigations.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="data-grid rounded-3xl overflow-hidden reveal">
+                    <img src="./assets/images/wazuhbruteforceattack.jpeg" alt="Wazuh brute force attack monitoring" class="w-full object-cover">
+                    <div class="p-6">
+                        <h3 class="text-white font-black text-xl mb-3 uppercase">Wazuh Event Monitoring</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Wazuh dashboard monitoring and terminal-side logs related to brute-force and authentication events. Demonstrates SIEM-style event visibility, rule-based alerting, and the use of centralized monitoring for incident detection and triage.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 reveal">
+                <div class="data-grid rounded-3xl p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div>
+                        <p class="text-cyan-400 mono text-xs uppercase tracking-[0.35em] mb-2">Live Deployment</p>
+                        <h3 class="text-white font-black text-2xl uppercase">TechBazaar SQL Injection Detection Project</h3>
+                        <p class="text-slate-400 mt-3 text-sm max-w-2xl">
+                            View the live deployed project demonstrating SQL injection detection, mitigation workflow, admin dashboard behavior, and ML-based project presentation.
+                        </p>
+                    </div>
+                    <a href="https://mysqlidmtml.netlify.app/" target="_blank" class="px-6 py-4 rounded-2xl bg-cyan-500 text-slate-950 font-black hover:bg-cyan-400 transition-all duration-300 whitespace-nowrap">
+                        View Live Project
+                    </a>
                 </div>
             </div>
         </div>
@@ -746,6 +891,7 @@
         </div>
     </footer>
 
+    <!-- CASE STUDY MODAL -->
     <div id="caseStudyModal" class="modal-backdrop">
         <div class="modal-panel">
             <div class="sticky top-0 z-10 px-6 md:px-10 py-5 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl flex items-center justify-between">
@@ -805,32 +951,6 @@
                         <div class="case-chip rounded-2xl p-5 text-slate-300">
                             <span class="text-cyan-400 font-bold uppercase text-xs tracking-[0.25em] block mb-2">Impact</span>
                             Enables in-browser low-latency attack blocking, defense-in-depth, attack logging, and model observability through a professional dashboard.
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-white text-xl font-black mb-4 uppercase">System Architecture</h4>
-                    <div class="grid md:grid-cols-5 gap-4">
-                        <div class="rounded-2xl p-5 bg-blue-950/40 border border-blue-500/20">
-                            <div class="text-white font-bold">Layer 1</div>
-                            <div class="text-blue-300 text-sm mt-2">Browser UI with login, cart, checkout, admin panel</div>
-                        </div>
-                        <div class="rounded-2xl p-5 bg-red-950/40 border border-red-500/20">
-                            <div class="text-white font-bold">Layer 2</div>
-                            <div class="text-red-300 text-sm mt-2">SQLD detection: regex + edit distance + scoring</div>
-                        </div>
-                        <div class="rounded-2xl p-5 bg-emerald-950/40 border border-emerald-500/20">
-                            <div class="text-white font-bold">Layer 3</div>
-                            <div class="text-emerald-300 text-sm mt-2">Netlify serverless authentication API</div>
-                        </div>
-                        <div class="rounded-2xl p-5 bg-fuchsia-950/40 border border-fuchsia-500/20">
-                            <div class="text-white font-bold">Layer 4</div>
-                            <div class="text-fuchsia-300 text-sm mt-2">PostgreSQL via parameterized queries</div>
-                        </div>
-                        <div class="rounded-2xl p-5 bg-amber-950/40 border border-amber-500/20">
-                            <div class="text-white font-bold">Layer 5</div>
-                            <div class="text-amber-300 text-sm mt-2">Admin dashboard, logs, ML metrics, live monitor</div>
                         </div>
                     </div>
                 </div>
@@ -940,7 +1060,6 @@
                 if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, observerOptions);
-
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         const heroText = document.getElementById('heroText');
@@ -952,12 +1071,10 @@
             heroText.style.transform = `translate(${x * 0.35}px, ${y * 0.35}px) rotateY(${-x * 0.12}deg) rotateX(${y * 0.08}deg)`;
             heroCard.style.transform = `translate(${x * -0.45}px, ${y * -0.45}px) rotateY(${x * 0.16}deg) rotateX(${-y * 0.1}deg)`;
         }
-
         function resetParallax() {
             heroText.style.transform = 'translate(0,0) rotateY(0deg) rotateX(0deg)';
             heroCard.style.transform = 'translate(0,0) rotateY(0deg) rotateX(0deg)';
         }
-
         window.addEventListener('mousemove', handleParallax);
         window.addEventListener('mouseleave', resetParallax);
 
@@ -978,7 +1095,6 @@
                 if (progress < 1) requestAnimationFrame(update);
                 else el.textContent = isDecimal ? target.toFixed(1) : Math.floor(target).toLocaleString();
             }
-
             requestAnimationFrame(update);
         }
 
@@ -991,12 +1107,11 @@
                 }
             });
         }, { threshold: 0.35 });
-
         counterObserver.observe(metricsSection);
 
         const progressFill = document.getElementById('progressFill');
         const progressDots = document.querySelectorAll('.progress-dot');
-        const sectionIds = ['hero', 'metrics', 'operations', 'history', 'contact'];
+        const sectionIds = ['hero', 'metrics', 'operations', 'history', 'threats', 'contact'];
 
         function updateScrollProgress() {
             const scrollTop = window.scrollY;
@@ -1012,12 +1127,10 @@
                     if (scrollTop >= top) currentSection = id;
                 }
             });
-
             progressDots.forEach(dot => {
                 dot.classList.toggle('active', dot.dataset.section === currentSection);
             });
         }
-
         window.addEventListener('scroll', updateScrollProgress);
         updateScrollProgress();
 
@@ -1095,7 +1208,6 @@
             constructor(initial = false) {
                 this.reset(initial);
             }
-
             reset(initial = false) {
                 this.x = 20 + Math.random() * 100;
                 this.y = initial ? Math.random() * height : height + Math.random() * 300;
@@ -1105,7 +1217,6 @@
                 this.attackPulse = false;
                 this.opacity = Math.random() * 0.35 + 0.25;
             }
-
             draw() {
                 ctx.save();
                 ctx.globalAlpha = this.attackPulse ? 0.9 : this.opacity;
@@ -1114,7 +1225,6 @@
                 ctx.fillText(this.text, this.x, this.y);
                 ctx.restore();
             }
-
             update() {
                 this.y -= this.speed;
                 if (this.y < -40) this.reset(false);
@@ -1125,7 +1235,6 @@
             logs.length = 0;
             for (let i = 0; i < 42; i++) logs.push(new LogLine(true));
         }
-
         function animateLogs() {
             ctx.clearRect(0, 0, width, height);
             logs.forEach(log => {
@@ -1134,36 +1243,32 @@
             });
             requestAnimationFrame(animateLogs);
         }
-
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             initLogs();
         });
-
         initLogs();
         animateLogs();
 
         const body = document.body;
-        const metrics = document.getElementById('sysMetrics');
+        const metricsDiv = document.getElementById('sysMetrics');
         const logoBorder = document.getElementById('navLogoBorder');
         const logoIcon = document.getElementById('navLogoIcon');
         const footerConn = document.getElementById('footerConn');
-        const alertBanner = document.getElementById('alertBanner');
-
+        const alertBannerEl = document.getElementById('alertBanner');
         let alertRunning = false;
 
         function setNormalMetrics() {
-            metrics.innerHTML = `
+            metricsDiv.innerHTML = `
                 <div>> NETWORK_SCAN: RUNNING</div>
                 <div>> LOG_CORRELATION: NOMINAL</div>
                 <div>> ALERT_STATUS: MONITORING</div>
                 <div>> ML_CONFIDENCE: 96.8% [C]</div>
             `;
         }
-
         function setAlertMetrics() {
-            metrics.innerHTML = `
+            metricsDiv.innerHTML = `
                 <div class="metric-pulse text-red-400 font-bold">> NETWORK_SCAN: LOCKED</div>
                 <div class="metric-pulse text-red-400 font-bold">> LOG_CORRELATION: THREAT_MATCH</div>
                 <div class="metric-pulse text-red-500 font-bold">> ALERT_STATUS: CRITICAL</div>
@@ -1176,8 +1281,7 @@
             alertRunning = true;
 
             body.classList.add('alert-active');
-            alertBanner.classList.add('show');
-
+            alertBannerEl.classList.add('show');
             setAlertMetrics();
             logoBorder.style.borderColor = '#dc2626';
             logoIcon.style.color = '#dc2626';
@@ -1193,7 +1297,7 @@
 
             setTimeout(() => {
                 body.classList.remove('alert-active');
-                alertBanner.classList.remove('show');
+                alertBannerEl.classList.remove('show');
                 setNormalMetrics();
                 logoBorder.style.borderColor = '#06b6d4';
                 logoIcon.style.color = '#22d3ee';
@@ -1205,7 +1309,6 @@
                     log.text = logContent[Math.floor(Math.random() * logContent.length)];
                     log.speed = log.baseSpeed;
                 });
-
                 alertRunning = false;
             }, 2600);
         }
