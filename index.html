@@ -1,131 +1,632 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ARAVIND DHAKURI | ACTIVE SOC OPERATIONS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        
+
         :root {
             --neon-cyan: #06b6d4;
             --neon-emerald: #10b981;
             --alert-red: #dc2626;
             --terminal-bg: #010411;
+            --slate-panel: rgba(15, 23, 42, 0.78);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         body {
             font-family: 'Space Grotesk', sans-serif;
             background-color: var(--terminal-bg);
             color: #94a3b8;
-            overflow-x: hidden;
             position: relative;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Smooth Reveal Animations */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal {
+            opacity: 0;
+            transform: translateY(34px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-        /* Dynamic Log Background */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         #logCanvas {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.05; /* Non-intrusive default */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            opacity: 0.06;
             transition: all 0.6s ease-in-out;
             pointer-events: none;
         }
 
-        /* Overwhelming Data Grid/Scanline */
+        .ambient-glow {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(6,182,212,0.08), transparent 30%),
+                radial-gradient(circle at 80% 30%, rgba(16,185,129,0.05), transparent 30%),
+                radial-gradient(circle at 50% 80%, rgba(6,182,212,0.04), transparent 35%);
+            transition: all 0.6s ease;
+        }
+
+        #alertOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0;
+            background:
+                radial-gradient(circle at center, rgba(220,38,38,0.10), transparent 45%),
+                linear-gradient(180deg, rgba(220,38,38,0.05), transparent 40%, rgba(220,38,38,0.03));
+            transition: opacity 0.4s ease;
+        }
+
+        #alertBanner {
+            position: fixed;
+            top: 84px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            z-index: 90;
+            padding: 10px 18px;
+            border: 1px solid rgba(220,38,38,0.35);
+            background: rgba(18, 3, 6, 0.78);
+            color: #fecaca;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            opacity: 0;
+            box-shadow: 0 0 30px rgba(220,38,38,0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.45s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        #alertBanner.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .warning-rings {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .warning-rings::before,
+        .warning-rings::after {
+            content: "";
+            position: absolute;
+            width: 28rem;
+            height: 28rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(220,38,38,0.14);
+            opacity: 0;
+            transform: scale(0.65);
+        }
+
+        .warning-rings::before {
+            top: 12%;
+            right: -6%;
+        }
+
+        .warning-rings::after {
+            bottom: 8%;
+            left: -6%;
+        }
+
+        body.alert-active .warning-rings::before,
+        body.alert-active .warning-rings::after {
+            animation: ringPulse 2.4s ease-out infinite;
+        }
+
+        @keyframes ringPulse {
+            0% { opacity: 0.05; transform: scale(0.6); }
+            50% { opacity: 0.18; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.25); }
+        }
+
+        .screen-noise {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.018;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 3px 3px, 4px 4px;
+            mix-blend-mode: soft-light;
+        }
+
         .data-grid {
             position: relative;
             border: 1px solid rgba(6, 182, 212, 0.1);
             background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(1, 4, 17, 0.95) 100%);
             overflow: hidden;
-            transition: border-color 0.4s ease;
+            transition: border-color 0.4s ease, transform 0.45s ease, box-shadow 0.45s ease;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+            will-change: transform;
         }
 
         .data-grid::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
             background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
             animation: scan 4s linear infinite;
         }
 
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-
-        .big-bold { font-weight: 800; line-height: 0.9; text-transform: uppercase; letter-spacing: -0.05em; }
-
-        /* Themed Components */
-        .glow-cyan:hover {
-            box-shadow: 0 0 40px rgba(6, 182, 212, 0.1);
-            border-color: var(--neon-cyan);
-            transform: scale(1.01);
+        .data-grid::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.015), transparent 35%);
+            pointer-events: none;
         }
 
-        /* --- RED ALERT ACTIVE STATE --- */
+        @keyframes scan {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        .big-bold {
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+        }
+
+        .glow-cyan:hover {
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.12);
+            border-color: var(--neon-cyan);
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .pro-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease, filter 0.7s ease;
+            filter: grayscale(100%) contrast(1.05) brightness(0.86);
+        }
+
+        .group:hover .pro-image {
+            transform: scale(1.05);
+            filter: grayscale(0%) contrast(1.08) brightness(1);
+        }
+
+        .hero-parallax {
+            transform-style: preserve-3d;
+            transition: transform 0.18s ease-out;
+            will-change: transform;
+        }
+
+        .profile-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2rem;
+            background: linear-gradient(145deg, rgba(6,182,212,0.18), rgba(16,185,129,0.06));
+            padding: 1px;
+        }
+
+        .profile-frame::before {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background: conic-gradient(from 0deg, transparent, rgba(6,182,212,0.3), transparent, rgba(16,185,129,0.2), transparent);
+            animation: rotateGlow 7s linear infinite;
+            opacity: .7;
+        }
+
+        @keyframes rotateGlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-inner {
+            position: relative;
+            z-index: 1;
+            border-radius: 2rem;
+            overflow: hidden;
+            background: #020617;
+        }
+
+        .counter-card {
+            background: linear-gradient(180deg, rgba(15,23,42,0.85), rgba(2,6,23,0.95));
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s ease;
+        }
+
+        .counter-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(6,182,212,0.24);
+            box-shadow: 0 20px 40px rgba(6,182,212,0.08);
+        }
+
+        .progress-wrap {
+            position: fixed;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 120;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .progress-line {
+            width: 3px;
+            height: 180px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-emerald), var(--alert-red));
+            border-radius: 999px;
+            transition: height 0.15s linear;
+        }
+
+        .progress-dots {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progress-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.06);
+            transition: all 0.25s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 14px rgba(6,182,212,0.65);
+            transform: scale(1.18);
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.78);
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-panel {
+            width: min(1100px, 96vw);
+            max-height: 88vh;
+            overflow-y: auto;
+            border: 1px solid rgba(6,182,212,0.18);
+            background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(2,6,23,0.98));
+            border-radius: 2rem;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+            transform: translateY(24px) scale(0.98);
+            transition: all 0.35s ease;
+        }
+
+        .modal-backdrop.active .modal-panel {
+            transform: translateY(0) scale(1);
+        }
+
+        .case-chip {
+            border: 1px solid rgba(6,182,212,0.15);
+            background: rgba(6,182,212,0.06);
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background:
+                radial-gradient(circle at 50% 40%, rgba(6,182,212,0.12), transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(220,38,38,0.08), transparent 28%),
+                linear-gradient(180deg, #010411 0%, #020617 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-ring {
+            width: 110px;
+            height: 110px;
+            border-radius: 999px;
+            border: 2px solid rgba(6,182,212,0.15);
+            border-top-color: var(--neon-cyan);
+            border-right-color: var(--neon-emerald);
+            animation: spin 1.1s linear infinite;
+            box-shadow: 0 0 50px rgba(6,182,212,0.16);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-bar {
+            width: min(320px, 70vw);
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+            margin-top: 22px;
+        }
+
+        .loading-bar span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-emerald), var(--alert-red));
+            animation: loadbar 2.4s ease forwards;
+        }
+
+        @keyframes loadbar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .glass-nav {
+            background: rgba(2,6,23,0.38);
+            backdrop-filter: blur(16px);
+        }
+
+        .motion-float {
+            animation: floatY 5.5s ease-in-out infinite;
+        }
+
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
         body.alert-active #logCanvas {
-            opacity: 0.15;
-            filter: sepia(100%) hue-rotate(-50deg) saturate(300%) contrast(150%);
+            opacity: 0.16;
+            filter: sepia(100%) hue-rotate(-50deg) saturate(320%) contrast(150%);
         }
 
         body.alert-active {
-            background-color: rgba(220, 38, 38, 0.03); /* Subtle background pulse */
+            background-color: rgba(220, 38, 38, 0.03);
+        }
+
+        body.alert-active .ambient-glow {
+            background:
+                radial-gradient(circle at 20% 20%, rgba(220,38,38,0.08), transparent 30%),
+                radial-gradient(circle at 80% 30%, rgba(220,38,38,0.05), transparent 30%),
+                radial-gradient(circle at 50% 80%, rgba(220,38,38,0.04), transparent 35%);
+        }
+
+        body.alert-active #alertOverlay {
+            opacity: 1;
         }
 
         body.alert-active .data-grid {
-            border-color: rgba(220, 38, 38, 0.2) !important;
+            border-color: rgba(220, 38, 38, 0.25) !important;
+            box-shadow: 0 0 0 1px rgba(220,38,38,0.06), 0 0 40px rgba(220,38,38,0.08);
         }
 
         body.alert-active .big-bold .text-cyan-500 {
             color: var(--alert-red) !important;
         }
+
+        body.alert-active nav {
+            border-bottom-color: rgba(220,38,38,0.12);
+            box-shadow: 0 8px 30px rgba(220,38,38,0.06);
+        }
+
+        .metric-pulse {
+            animation: metricPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes metricPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+
+        html::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        html::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, rgba(6,182,212,.45), rgba(16,185,129,.28));
+            border-radius: 999px;
+        }
+
+        html::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        @media (max-width: 1024px) {
+            .progress-wrap {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="selection:bg-cyan-500/30">
 
-    <canvas id="logCanvas"></canvas>
+    <!-- Loading Intro -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader-ring"></div>
+        <div class="mt-8 text-center">
+            <div class="mono text-cyan-400 text-xs tracking-[0.4em] uppercase">Initializing SOC Portfolio</div>
+            <h2 class="text-white font-black text-3xl mt-3 tracking-tight">ARAVIND.DHAKURI</h2>
+            <p class="text-slate-500 text-sm mt-2">Threat telemetry • ML intelligence • Secure operations</p>
+        </div>
+        <div class="loading-bar"><span></span></div>
+    </div>
 
-    <nav class="fixed top-0 w-full z-[100] py-6 px-10 flex justify-between items-center backdrop-blur-xl border-b border-white/5">
+    <canvas id="logCanvas"></canvas>
+    <div class="ambient-glow"></div>
+    <div id="alertOverlay"></div>
+    <div class="warning-rings"></div>
+    <div class="screen-noise"></div>
+    <div id="alertBanner">THREAT TELEMETRY // SQLI ANOMALY DETECTED // AUTO MITIGATION ACTIVE</div>
+
+    <!-- Sticky Progress -->
+    <div class="progress-wrap">
+        <div class="progress-dots">
+            <a href="#hero" class="progress-dot active" data-section="hero"></a>
+            <a href="#metrics" class="progress-dot" data-section="metrics"></a>
+            <a href="#operations" class="progress-dot" data-section="operations"></a>
+            <a href="#history" class="progress-dot" data-section="history"></a>
+            <a href="#contact" class="progress-dot" data-section="contact"></a>
+        </div>
+        <div class="progress-line">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-[100] py-6 px-6 md:px-10 flex justify-between items-center glass-nav border-b border-white/5 transition-all duration-500">
         <div class="flex items-center gap-4">
-            <div class="w-10 h-10 border-2 border-cyan-500 flex items-center justify-center rotate-45 transition-colors" id="navLogoBorder">
-                <i class="fa-solid fa-radar text-cyan-400 -rotate-45" id="navLogoIcon"></i>
+            <div class="w-10 h-10 border-2 border-cyan-500 flex items-center justify-center rotate-45 transition-colors duration-500" id="navLogoBorder">
+                <i class="fa-solid fa-radar text-cyan-400 -rotate-45 transition-colors duration-500" id="navLogoIcon"></i>
             </div>
             <div class="leading-none">
                 <span class="block font-black text-white text-xl tracking-tighter">ARAVIND.DHAKURI</span>
                 <span class="text-[9px] font-bold text-cyan-500 uppercase tracking-[0.4em]">Unit L1 Operator [ACT]</span>
             </div>
         </div>
-        <div class="hidden lg:flex gap-12 text-[10px] font-black uppercase tracking-widest text-slate-500">
-            <a href="#threats" class="hover:text-cyan-400 transition-colors">Tactical Intel</a>
+        <div class="hidden lg:flex gap-10 text-[10px] font-black uppercase tracking-widest text-slate-500">
+            <a href="#metrics" class="hover:text-cyan-400 transition-colors">Threat Metrics</a>
             <a href="#operations" class="hover:text-cyan-400 transition-colors">Operations</a>
             <a href="#history" class="hover:text-cyan-400 transition-colors">Service Log</a>
-            <a href="https://www.linkedin.com/in/aravind-dhakuri-3a1880249/" target="_blank" class="text-white border-b-2 border-cyan-500 hover:border-cyan-400">Connect Profile</a>
+            <button id="openCaseStudyTop" class="hover:text-cyan-400 transition-colors">Case Study</button>
+            <a href="https://www.linkedin.com/in/aravind-dhakuri-3a1880249/" target="_blank" class="text-white border-b-2 border-cyan-500 hover:border-cyan-400 transition-colors">Connect Profile</a>
         </div>
     </nav>
 
-    <section class="min-h-screen flex items-center justify-center pt-20 px-6 relative overflow-hidden">
+    <!-- HERO -->
+    <section id="hero" class="min-h-screen flex items-center justify-center pt-24 px-6 relative overflow-hidden">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div class="reveal active">
-                <h1 class="big-bold text-8xl md:text-[10rem] text-white mb-6">
-                    MONITOR<br/><span class="text-cyan-500">TRIAGE</span><br/>NEUTRALIZE
-                </h1>
-                <p class="text-xl text-slate-400 font-light max-w-lg leading-relaxed border-l-4 border-cyan-500/30 pl-6">
-                    Active SOC Analyst L1 specialized in automated anomaly classification. Focused on hybrid detection frameworks, utilizing TF-IDF and Neural Networks to identify and mitigate complex SQLi payloads with a confirmed 96.8% accuracy rate.
-                </p>
-            </div>
-            <div class="data-grid p-8 rounded-tr-[5rem] rounded-bl-[5rem] border-cyan-500/20 reveal active">
-                <div class="grid grid-cols-2 gap-4 mono text-[10px] text-cyan-400/60 uppercase mb-8" id="sysMetrics">
-                    <div>> NETWORK_SCAN: RUNNING</div>
-                    <div>> LOG_CORRELATION: NOMINAL</div>
-                    <div>> ALERT_STATUS: MONITORING</div>
-                    <div>> ML_CONFIDENCE: 96.8% [C]</div>
+            <div id="heroText" class="reveal active hero-parallax">
+                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 mb-6 motion-float">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="mono text-[10px] uppercase tracking-[0.3em] text-cyan-400">Future SOC Analyst • Cybersecurity Portfolio</span>
                 </div>
-                <img src="uploaded:home page.png.png" class="rounded-xl border border-white/10 shadow-2xl hover:scale-[1.02] transition-transform duration-500" alt="TechBazaar E-Commerce Storefront">
+
+                <h1 class="big-bold text-7xl sm:text-8xl md:text-[9rem] text-white mb-6">
+                    MONITOR<br /><span class="text-cyan-500">TRIAGE</span><br />NEUTRALIZE
+                </h1>
+
+                <p class="text-xl text-slate-400 font-light max-w-xl leading-relaxed border-l-4 border-cyan-500/30 pl-6">
+                    Active SOC Analyst L1 specialized in automated anomaly classification. Focused on hybrid detection frameworks, utilizing TF-IDF, Random Forest, regex intelligence, and fuzzy matching to identify and mitigate complex SQL injection payloads with a confirmed 96.8% accuracy rate.
+                </p>
+
+                <div class="mt-8 flex flex-wrap gap-4">
+                    <button id="openCaseStudy" class="px-6 py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-all duration-300 shadow-lg shadow-cyan-500/20">
+                        View Case Study
+                    </button>
+                    <a href="#operations" class="px-6 py-3 rounded-xl border border-white/10 text-white hover:border-cyan-500/40 hover:text-cyan-400 transition-all duration-300">
+                        Explore Project
+                    </a>
+                </div>
+            </div>
+
+            <div id="heroCard" class="data-grid p-8 rounded-tr-[5rem] rounded-bl-[5rem] border-cyan-500/20 reveal active hero-parallax">
+                <div class="grid md:grid-cols-[1fr_auto] gap-8 items-center">
+                    <div>
+                        <div class="grid grid-cols-2 gap-4 mono text-[10px] text-cyan-400/60 uppercase mb-8 transition-all duration-300" id="sysMetrics">
+                            <div>> NETWORK_SCAN: RUNNING</div>
+                            <div>> LOG_CORRELATION: NOMINAL</div>
+                            <div>> ALERT_STATUS: MONITORING</div>
+                            <div>> ML_CONFIDENCE: 96.8% [C]</div>
+                        </div>
+
+                        <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                            <img src="uploaded:home page.png.png" class="w-full hover:scale-[1.02] transition-transform duration-500" alt="TechBazaar E-Commerce Storefront">
+                        </div>
+                    </div>
+
+                    <div class="profile-frame max-w-[240px] mx-auto lg:mx-0">
+                        <div class="profile-inner">
+                            <img src="uploaded:me.jpeg" alt="Aravind Dhakuri profile photo" class="w-full h-[320px] object-cover">
+                            <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-950 to-transparent">
+                                <h3 class="text-white font-black text-lg tracking-tight">ARAVIND DHAKURI</h3>
+                                <p class="text-cyan-400 text-[10px] uppercase tracking-[0.3em] mt-1">Cybersecurity • SOC • ML Security</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COUNTERS -->
+    <section id="metrics" class="py-10 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-6 reveal">
+                <div class="counter-card rounded-3xl p-8">
+                    <div class="text-slate-500 text-xs uppercase tracking-[0.3em] mb-4 mono">Model Accuracy</div>
+                    <div class="text-5xl font-black text-white"><span class="counter" data-target="96.8">0</span><span class="text-cyan-400">%</span></div>
+                    <p class="text-slate-400 mt-3 text-sm">Precision-tuned SQLi detection pipeline with high-confidence classification.</p>
+                </div>
+                <div class="counter-card rounded-3xl p-8">
+                    <div class="text-slate-500 text-xs uppercase tracking-[0.3em] mb-4 mono">Attack Logs Analyzed</div>
+                    <div class="text-5xl font-black text-white"><span class="counter" data-target="1547">0</span><span class="text-emerald-400">+</span></div>
+                    <p class="text-slate-400 mt-3 text-sm">Real-time SOC-style visibility across suspicious requests and telemetry records.</p>
+                </div>
+                <div class="counter-card rounded-3xl p-8">
+                    <div class="text-slate-500 text-xs uppercase tracking-[0.3em] mb-4 mono">Threats Blocked</div>
+                    <div class="text-5xl font-black text-white"><span class="counter" data-target="311">0</span><span class="text-red-400">+</span></div>
+                    <p class="text-slate-400 mt-3 text-sm">Hybrid mitigation engine blocking malicious payloads before backend execution.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -135,11 +636,11 @@
             <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
                 <div class="reveal">
                     <span class="text-cyan-500 font-bold text-xs uppercase tracking-widest mb-4 block">Major Operation // 01</span>
-                    <h2 class="big-bold text-7xl text-white">TECHBAZAAR <span class="text-emerald-500">SQLD</span></h2>
+                    <h2 class="big-bold text-6xl md:text-7xl text-white">TECHBAZAAR <span class="text-emerald-500">SQLD</span></h2>
                 </div>
                 <div class="text-right mono text-xs reveal text-slate-600">
-                    [ ALGORITHM: TF-IDF + NEURAL_NETWORK ]<br/>
-                    [ CDE_WEIGHT: FUZZY_PATTERN_MATCH ]
+                    [ ALGORITHM: TF-IDF + RANDOM_FOREST ]<br />
+                    [ DETECTION: REGEX + LEVENSHTEIN + CONFIDENCE SCORING ]
                 </div>
             </div>
 
@@ -148,13 +649,10 @@
                     <div class="p-6 bg-slate-900/80 border-l-2 border-emerald-500 rounded-r-2xl">
                         <h3 class="text-white font-black text-xl mb-4 uppercase">Operational Mitigation Framework</h3>
                         <p class="text-sm text-slate-400 leading-relaxed font-light">
-                            Deployed a **5-layer mitigation framework** that integrates a pure JavaScript input class before database commit. 
-                            The engine utilizes a **14-pattern weighted regex suite** (UNION, Tautology, and Command Execution patterns) to calculate fuzzy Levenshtein similarity scores for obfuscated queries. 
-                            Inputs are classified into **5 operational risk tiers** (None to Critical), ensuring Legitimate traffic bypasses blocking logic. 
-                            The backend reinforces security using **PostgreSQL parameterized queries** and input encoding to neutralize any stored XSS in the threat logs. 
-                            This defense-in-depth approach provides comprehensive real-time mitigation against advanced injection attempts.
+                            Deployed a 5-layer mitigation framework integrating frontend SQLi detection, fuzzy similarity analysis, confidence scoring, backend parameterized PostgreSQL queries, and XSS-safe log rendering. The project demonstrates real-time SQL injection prevention inside a secure e-commerce architecture with SOC-inspired monitoring and attack telemetry.
                         </p>
                     </div>
+
                     <div class="grid grid-cols-2 gap-4">
                         <div class="data-grid p-4 text-center rounded-xl">
                             <span class="block text-2xl font-black text-white">96.8%</span>
@@ -162,21 +660,25 @@
                         </div>
                         <div class="data-grid p-4 text-center rounded-xl">
                             <span class="block text-2xl font-black text-white">14</span>
-                            <span class="text-[9px] uppercase font-bold text-emerald-500">Weighted Regex Suite</span>
+                            <span class="text-[9px] uppercase font-bold text-emerald-500">Regex Patterns</span>
                         </div>
                     </div>
+
+                    <button id="openCaseStudyInline" class="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-black hover:scale-[1.01] transition-all duration-300 shadow-lg shadow-cyan-500/20">
+                        Open Detailed Project Case Study
+                    </button>
                 </div>
 
                 <div class="lg:col-span-2 grid md:grid-cols-2 gap-6 reveal">
-                    <div class="group relative overflow-hidden rounded-3xl border border-white/5 glow-cyan">
-                        <img src="uploaded:MLtraining.png.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent p-6 flex flex-col justify-end">
-                            <span class="text-xs font-bold text-emerald-400 uppercase">Training_Metrics [TF-IDF Pipeline]</span>
+                    <div class="group relative overflow-hidden rounded-3xl border border-white/5 glow-cyan min-h-[320px] bg-slate-900/50">
+                        <img src="uploaded:MLtraining.png.png" class="pro-image" alt="Machine Learning Training Results">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs font-bold text-emerald-400 uppercase">Training_Metrics [TF-IDF + Random Forest]</span>
                         </div>
                     </div>
-                    <div class="group relative overflow-hidden rounded-3xl border border-white/5 glow-cyan">
-                        <img src="uploaded:Attacklogs.png.png" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent p-6 flex flex-col justify-end">
+                    <div class="group relative overflow-hidden rounded-3xl border border-white/5 glow-cyan min-h-[320px] bg-slate-900/50">
+                        <img src="uploaded:Attacklogs.png.png" class="pro-image" alt="SQL Injection Attack Audit Logs">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-6 flex flex-col justify-end">
                             <span class="text-xs font-bold text-cyan-400 uppercase">Detection_Telemetry [Attack Audit Logs]</span>
                         </div>
                     </div>
@@ -187,8 +689,8 @@
 
     <section id="history" class="py-32 px-6">
         <div class="max-w-7xl mx-auto">
-            <h2 class="big-bold text-6xl text-white mb-20">SERVICE <span class="text-slate-800">HISTORY</span></h2>
-            
+            <h2 class="big-bold text-6xl text-white mb-20 reveal">SERVICE <span class="text-slate-800">HISTORY</span></h2>
+
             <div class="grid lg:grid-cols-2 gap-20">
                 <div class="reveal">
                     <div class="flex items-center gap-4 mb-6">
@@ -201,11 +703,7 @@
                         </div>
                     </div>
                     <p class="text-slate-400 leading-relaxed font-light mb-8">
-                        Completed a high-intensity 6-week online internship program focused on practical Python-based security tool development. 
-                        Developed a comprehensive **Web Application Vulnerability Scanner** using `Requests` and `BeautifulSoup` to automate SQLi and XSS detection. 
-                        Engineered a **Password Strength Analyzer** that evaluates entropy based on character sets and complexity rules. 
-                        Performed extensive **Network Footprinting** using industry-standard tools like `Nmap`, Whois, and Traceroute to identify live hosts and open services. 
-                        Mastered Cryptographic basics, implementing MD5, SHA-256, and AES-256 for data integrity and secure communication.
+                        Completed a high-intensity online internship focused on practical Python-based cybersecurity development. Built a Web Application Vulnerability Scanner for SQLi and XSS detection, a Password Strength Analyzer, performed network footprinting using Nmap, Whois, and Traceroute, and implemented cryptographic basics including MD5, SHA-256, and AES-256.
                     </p>
                     <div class="flex flex-wrap gap-2">
                         <span class="px-3 py-1 bg-slate-900 border border-slate-800 text-[10px] font-bold text-slate-300 rounded">OWASP_TOP_10</span>
@@ -237,10 +735,10 @@
         </div>
     </section>
 
-    <footer class="py-24 px-10 border-t border-white/5 text-center relative overflow-hidden bg-slate-950">
+    <footer id="contact" class="py-24 px-10 border-t border-white/5 text-center relative overflow-hidden bg-slate-950">
         <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-full h-1/2 bg-cyan-500/10 blur-[100px] pointer-events-none"></div>
         <div class="max-w-4xl mx-auto reveal">
-            <h2 class="big-bold text-5xl text-white mb-10">INITIATE <span class="text-cyan-500" id="footerConn">CONNECTION</span></h2>
+            <h2 class="big-bold text-5xl text-white mb-10">INITIATE <span class="text-cyan-500 transition-colors duration-500" id="footerConn">CONNECTION</span></h2>
             <a href="mailto:aravinddhakuri@gmail.com" class="text-2xl md:text-4xl font-light text-slate-400 hover:text-cyan-400 transition-colors lowercase">
                 aravinddhakuri@gmail.com
             </a>
@@ -252,9 +750,202 @@
         </div>
     </footer>
 
+    <!-- CASE STUDY MODAL -->
+    <div id="caseStudyModal" class="modal-backdrop">
+        <div class="modal-panel">
+            <div class="sticky top-0 z-10 px-6 md:px-10 py-5 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl flex items-center justify-between">
+                <div>
+                    <p class="text-cyan-400 text-[10px] uppercase tracking-[0.35em] mono">Project Case Study</p>
+                    <h3 class="text-white text-2xl md:text-3xl font-black tracking-tight">SQL Injection Detection and Mitigation Using Machine Learning</h3>
+                </div>
+                <button id="closeCaseStudy" class="w-11 h-11 rounded-full border border-white/10 text-slate-300 hover:text-white hover:border-cyan-500/40 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 md:p-10 space-y-10">
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <p class="text-slate-300 leading-relaxed">
+                            <span class="text-white font-bold">TechBazaar</span> is a secure e-commerce web application designed as a cybersecurity demonstration platform. Its core objective is real-time detection, blocking, and auditing of SQL Injection attacks using a hybrid architecture combining weighted regex detection, Levenshtein Edit Distance similarity scoring, confidence-based risk classification, and a Python machine learning pipeline built with TF-IDF and Random Forest.
+                        </p>
+                    </div>
+                    <div class="data-grid rounded-3xl p-6">
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <div class="text-3xl font-black text-white">96.8%</div>
+                                <div class="text-[10px] uppercase tracking-[0.25em] text-cyan-400">Accuracy</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-white">97.2%</div>
+                                <div class="text-[10px] uppercase tracking-[0.25em] text-emerald-400">Precision</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-white">96.4%</div>
+                                <div class="text-[10px] uppercase tracking-[0.25em] text-cyan-400">Recall</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-white">0.95</div>
+                                <div class="text-[10px] uppercase tracking-[0.25em] text-amber-400">F1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">Executive Summary</h4>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="case-chip rounded-2xl p-5 text-slate-300">
+                            <span class="text-cyan-400 font-bold uppercase text-xs tracking-[0.25em] block mb-2">Problem</span>
+                            SQL Injection remains one of the most dangerous web vulnerabilities, enabling authentication bypass, data extraction, destructive operations, and command execution.
+                        </div>
+                        <div class="case-chip rounded-2xl p-5 text-slate-300">
+                            <span class="text-cyan-400 font-bold uppercase text-xs tracking-[0.25em] block mb-2">Solution</span>
+                            A hybrid SQLi detection engine combining 14 weighted regex patterns, fuzzy string similarity via Levenshtein distance, heuristics, and an ML pipeline using TF-IDF with Random Forest.
+                        </div>
+                        <div class="case-chip rounded-2xl p-5 text-slate-300">
+                            <span class="text-cyan-400 font-bold uppercase text-xs tracking-[0.25em] block mb-2">Architecture</span>
+                            Five-layer structure: UI → SQLD detection engine → Netlify backend → PostgreSQL database → SOC-style admin monitoring and audit.
+                        </div>
+                        <div class="case-chip rounded-2xl p-5 text-slate-300">
+                            <span class="text-cyan-400 font-bold uppercase text-xs tracking-[0.25em] block mb-2">Impact</span>
+                            Enables in-browser low-latency attack blocking, defense-in-depth, attack logging, and model observability through a professional dashboard.
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">System Architecture</h4>
+                    <div class="grid md:grid-cols-5 gap-4">
+                        <div class="rounded-2xl p-5 bg-blue-950/40 border border-blue-500/20">
+                            <div class="text-white font-bold">Layer 1</div>
+                            <div class="text-blue-300 text-sm mt-2">Browser UI with login, cart, checkout, admin panel</div>
+                        </div>
+                        <div class="rounded-2xl p-5 bg-red-950/40 border border-red-500/20">
+                            <div class="text-white font-bold">Layer 2</div>
+                            <div class="text-red-300 text-sm mt-2">SQLD detection: regex + edit distance + scoring</div>
+                        </div>
+                        <div class="rounded-2xl p-5 bg-emerald-950/40 border border-emerald-500/20">
+                            <div class="text-white font-bold">Layer 3</div>
+                            <div class="text-emerald-300 text-sm mt-2">Netlify serverless authentication API</div>
+                        </div>
+                        <div class="rounded-2xl p-5 bg-fuchsia-950/40 border border-fuchsia-500/20">
+                            <div class="text-white font-bold">Layer 4</div>
+                            <div class="text-fuchsia-300 text-sm mt-2">PostgreSQL via parameterized queries</div>
+                        </div>
+                        <div class="rounded-2xl p-5 bg-amber-950/40 border border-amber-500/20">
+                            <div class="text-white font-bold">Layer 5</div>
+                            <div class="text-amber-300 text-sm mt-2">Admin dashboard, logs, ML metrics, live monitor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="data-grid rounded-3xl overflow-hidden">
+                        <img src="uploaded:MLtraining.png.png" alt="Training metrics screenshot" class="w-full">
+                    </div>
+                    <div class="data-grid rounded-3xl overflow-hidden">
+                        <img src="uploaded:Attacklogs.png.png" alt="Attack logs screenshot" class="w-full">
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">Detection Logic</h4>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div class="case-chip rounded-2xl p-5">
+                            <h5 class="text-white font-bold mb-3">Regex Phase</h5>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Uses 14 patterns to detect UNION attacks, tautology payloads, piggybacked queries, schema probing, time-based blind SQLi, file access attempts, version probes, comment truncation, and command execution attempts.
+                            </p>
+                        </div>
+                        <div class="case-chip rounded-2xl p-5">
+                            <h5 class="text-white font-bold mb-3">Similarity Phase</h5>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Uses normalized Levenshtein similarity to compare user input against known malicious patterns. Variants such as modified tautologies can still be detected even if exact signatures are evaded.
+                            </p>
+                        </div>
+                        <div class="case-chip rounded-2xl p-5">
+                            <h5 class="text-white font-bold mb-3">Heuristic Phase</h5>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Additional signals like multiple apostrophes and semicolons contribute to the risk score.
+                            </p>
+                        </div>
+                        <div class="case-chip rounded-2xl p-5">
+                            <h5 class="text-white font-bold mb-3">Confidence & Risk</h5>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Confidence is normalized to a percentage and classified into None, Low, Medium, High, and Critical. Inputs above 30% are blocked and logged.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">Machine Learning Pipeline</h4>
+                    <div class="space-y-3 text-slate-300">
+                        <p><span class="text-cyan-400 font-bold">Dataset:</span> Labeled inputs with SQLi payloads and normal user inputs.</p>
+                        <p><span class="text-cyan-400 font-bold">Feature Engineering:</span> TF-IDF vectorization converts text into sparse numerical representations.</p>
+                        <p><span class="text-cyan-400 font-bold">Model:</span> Random Forest classifier with 100 estimators.</p>
+                        <p><span class="text-cyan-400 font-bold">Evaluation:</span> 96.8% accuracy, 97.2% precision, 96.4% recall, F1 score 0.95.</p>
+                        <p><span class="text-cyan-400 font-bold">Inference:</span> Python `predict.py` loads persisted model and vectorizer to classify arbitrary input.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">Security Measures</h4>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="rounded-2xl p-5 bg-slate-900 border border-white/5">
+                            <h5 class="text-white font-bold mb-2">Frontend SQLD Detection</h5>
+                            <p class="text-sm text-slate-400">Blocks suspicious inputs before API calls are made.</p>
+                        </div>
+                        <div class="rounded-2xl p-5 bg-slate-900 border border-white/5">
+                            <h5 class="text-white font-bold mb-2">Parameterized Queries</h5>
+                            <p class="text-sm text-slate-400">Uses PostgreSQL placeholders so user values are treated strictly as data.</p>
+                        </div>
+                        <div class="rounded-2xl p-5 bg-slate-900 border border-white/5">
+                            <h5 class="text-white font-bold mb-2">XSS Prevention</h5>
+                            <p class="text-sm text-slate-400">HTML entity encoding secures admin log rendering against stored XSS.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">Key Attack Types Covered</h4>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Tautology</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">UNION</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Piggyback</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Comment Truncation</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Blind SQLi</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Time-Based Blind</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Error-Based</span>
+                        <span class="px-4 py-2 rounded-full case-chip text-sm text-slate-200">Command Execution</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white text-xl font-black mb-4 uppercase">Conclusion</h4>
+                    <p class="text-slate-300 leading-relaxed">
+                        TechBazaar demonstrates a complete applied-security workflow: frontend threat interception, machine learning-assisted classification, defense-in-depth through secure backend practices, and SOC-level observability. The project blends cybersecurity operations, software engineering, and ML-driven detection into a practical, portfolio-grade demonstration of modern application security.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Intersection Observer for Smooth Reveal
-        const observerOptions = { threshold: 0.1 };
+        // ===============================
+        // Loading screen
+        // ===============================
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hide');
+            }, 2300);
+        });
+
+        // ===============================
+        // Reveal animation
+        // ===============================
+        const observerOptions = { threshold: 0.12 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
@@ -263,56 +954,235 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // ==========================================================
+        // ===============================
+        // Parallax mouse movement
+        // ===============================
+        const heroText = document.getElementById('heroText');
+        const heroCard = document.getElementById('heroCard');
+
+        function handleParallax(e) {
+            const x = (window.innerWidth / 2 - e.clientX) / 35;
+            const y = (window.innerHeight / 2 - e.clientY) / 35;
+
+            heroText.style.transform = `translate(${x * 0.35}px, ${y * 0.35}px) rotateY(${-x * 0.12}deg) rotateX(${y * 0.08}deg)`;
+            heroCard.style.transform = `translate(${x * -0.45}px, ${y * -0.45}px) rotateY(${x * 0.16}deg) rotateX(${-y * 0.1}deg)`;
+        }
+
+        function resetParallax() {
+            heroText.style.transform = 'translate(0,0) rotateY(0deg) rotateX(0deg)';
+            heroCard.style.transform = 'translate(0,0) rotateY(0deg) rotateX(0deg)';
+        }
+
+        window.addEventListener('mousemove', handleParallax);
+        window.addEventListener('mouseleave', resetParallax);
+
+        // ===============================
+        // Animated counters
+        // ===============================
+        const counters = document.querySelectorAll('.counter');
+        let countersStarted = false;
+
+        function animateCounter(el) {
+            const target = parseFloat(el.dataset.target);
+            const isDecimal = String(target).includes('.');
+            const duration = 1800;
+            const start = 0;
+            const startTime = performance.now();
+
+            function update(now) {
+                const progress = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const value = start + (target - start) * eased;
+
+                el.textContent = isDecimal ? value.toFixed(1) : Math.floor(value).toLocaleString();
+
+                if (progress < 1) requestAnimationFrame(update);
+                else el.textContent = isDecimal ? target.toFixed(1) : Math.floor(target).toLocaleString();
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        const metricsSection = document.getElementById('metrics');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !countersStarted) {
+                    counters.forEach(animateCounter);
+                    countersStarted = true;
+                }
+            });
+        }, { threshold: 0.35 });
+
+        counterObserver.observe(metricsSection);
+
+        // ===============================
+        // Sticky progress indicator
+        // ===============================
+        const progressFill = document.getElementById('progressFill');
+        const progressDots = document.querySelectorAll('.progress-dot');
+        const sectionIds = ['hero', 'metrics', 'operations', 'history', 'contact'];
+
+        function updateScrollProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressFill.style.height = `${progress}%`;
+
+            let currentSection = 'hero';
+            sectionIds.forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const top = section.offsetTop - 160;
+                    if (scrollTop >= top) currentSection = id;
+                }
+            });
+
+            progressDots.forEach(dot => {
+                dot.classList.toggle('active', dot.dataset.section === currentSection);
+            });
+        }
+
+        window.addEventListener('scroll', updateScrollProgress);
+        updateScrollProgress();
+
+        // ===============================
+        // Case study modal
+        // ===============================
+        const caseStudyModal = document.getElementById('caseStudyModal');
+        const closeCaseStudy = document.getElementById('closeCaseStudy');
+        const openButtons = [
+            document.getElementById('openCaseStudy'),
+            document.getElementById('openCaseStudyTop'),
+            document.getElementById('openCaseStudyInline')
+        ];
+
+        openButtons.forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    caseStudyModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+        });
+
+        closeCaseStudy.addEventListener('click', () => {
+            caseStudyModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        caseStudyModal.addEventListener('click', (e) => {
+            if (e.target === caseStudyModal) {
+                caseStudyModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                caseStudyModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // ===============================
+        // Motion polish (GSAP-style without dependency)
+        // ===============================
+        function motionIn(selector, delay = 0) {
+            document.querySelectorAll(selector).forEach((el, i) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(28px)';
+                el.style.transition = `opacity 0.9s cubic-bezier(0.16,1,0.3,1) ${delay + i * 0.08}s, transform 0.9s cubic-bezier(0.16,1,0.3,1) ${delay + i * 0.08}s`;
+
+                const io = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            el.style.opacity = '1';
+                            el.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, { threshold: 0.15 });
+
+                io.observe(el);
+            });
+        }
+
+        motionIn('.counter-card', 0.05);
+        motionIn('.case-chip', 0.02);
+
+        // ===============================
         // SOC BACKGROUND LOG GENERATOR
-        // Inspired by your actual project reports
-        // ==========================================================
+        // ===============================
         const canvas = document.getElementById('logCanvas');
         const ctx = canvas.getContext('2d');
+
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
+        let animationFrameId;
 
         const logs = [];
         const logContent = [
-            "192.168.1.10 - - [27/Mar/2026:11:45:01 +0000] \"GET /login.php HTTP/1.1\" 200 1342",
-            "Wazuh_Alert: Possible brute force attack from 10.0.0.50 (95 fails)",
-            "CRITICAL: SQLi attempt detected (UNION SELECT) at endpoint: /products.php [Block_Action_Executed]",
-            "SYSTEM_LOG: [git] - - Initialized repository /var/www/html/secure_ops.git",
-            "Nmap Scan Initiated by 192.168.1.5 (Port_Knocking_Detected)",
-            "Levenshtein_Edit_Distance_Calculated: 14 [Confidence: 0.96] Payload: OR 1=1 --",
-            "Suricata_Alert: [EVE-LOG] - Possible Nmap User-Agent Detected",
-            "Wireshark_Telemetry: TCP Retransmission (192.168.1.5:80 -> 10.0.0.5:443)",
-            "ML_CLASSIFIER: TF-IDF vectorization complete. Query flagged."
+            '192.168.1.10 - - [27/Mar/2026:11:45:01 +0000] "GET /login.php HTTP/1.1" 200 1342',
+            'Wazuh_Alert: Possible brute force attack from 10.0.0.50 (95 fails)',
+            'CRITICAL: SQLi attempt detected (UNION SELECT) at endpoint: /products.php [Block_Action_Executed]',
+            'SYSTEM_LOG: [git] - - Initialized repository /var/www/html/secure_ops.git',
+            'Nmap Scan Initiated by 192.168.1.5 (Port_Knocking_Detected)',
+            'Levenshtein_Edit_Distance_Calculated: 14 [Confidence: 0.96] Payload: OR 1=1 --',
+            'Suricata_Alert: [EVE-LOG] - Possible Nmap User-Agent Detected',
+            'Wireshark_Telemetry: TCP Retransmission (192.168.1.5:80 -> 10.0.0.5:443)',
+            'ML_CLASSIFIER: TF-IDF vectorization complete. Query flagged.',
+            'DEFENSE_LAYER[3]: Weighted regex match threshold exceeded.',
+            'POSTGRES_SECURE_BIND: Parameterized query committed successfully.',
+            'SIEM_EVENT: Telemetry correlation score elevated.',
+            'RULESET_SYNC: Signature package validated.',
+            'ANOMALY_ENGINE: Hybrid risk model inference complete.'
+        ];
+
+        const attackLogContent = [
+            'ALERT: SQLI anomaly detected // Severity: Critical // Response: Blocked',
+            'MITIGATION_INITIATED: Tautology pattern match exceeded threshold',
+            'THREAT_SCORE_ESCALATION: UNION payload confidence 97.2%',
+            'SOC_PIPELINE: Random Forest confirms malicious intent',
+            'DEFENSE_ACTION: Request quarantined before database commit',
+            'INCIDENT_TRACE: Obfuscated injection attempt neutralized',
+            'HIGH_RISK_PAYLOAD: Command execution pattern identified',
+            'LIVE_RESPONSE: Audit log updated // Session flagged'
         ];
 
         class LogLine {
-            constructor() {
-                this.x = 20;
-                this.y = height + Math.random() * 200;
+            constructor(initial = false) {
+                this.reset(initial);
+            }
+
+            reset(initial = false) {
+                this.x = 20 + Math.random() * 100;
+                this.y = initial ? Math.random() * height : height + Math.random() * 300;
                 this.text = logContent[Math.floor(Math.random() * logContent.length)];
-                this.speed = Math.random() * 1.5 + 0.8;
+                this.speed = Math.random() * 1.3 + 0.7;
+                this.baseSpeed = this.speed;
                 this.attackPulse = false;
+                this.opacity = Math.random() * 0.35 + 0.25;
             }
 
             draw() {
-                ctx.fillStyle = this.attackPulse ? '#dc2626' : '#06b6d4'; // Standard Cyan or Attack Red
-                ctx.font = '11px JetBrains Mono, monospace';
+                ctx.save();
+                ctx.globalAlpha = this.attackPulse ? 0.9 : this.opacity;
+                ctx.fillStyle = this.attackPulse ? '#ef4444' : '#06b6d4';
+                ctx.font = this.attackPulse ? 'bold 11px JetBrains Mono, monospace' : '11px JetBrains Mono, monospace';
                 ctx.fillText(this.text, this.x, this.y);
+                ctx.restore();
             }
 
             update() {
                 this.y -= this.speed;
-                if (this.y < -30) {
-                    this.y = height + Math.random() * 50;
-                    this.attackPulse = false; // Reset attack state when recycled
+                if (this.y < -40) {
+                    this.reset(false);
                 }
             }
         }
 
         function initLogs() {
-            for (let i = 0; i < 40; i++) {
-                logs.push(new LogLine());
-            }
+            logs.length = 0;
+            for (let i = 0; i < 42; i++) logs.push(new LogLine(true));
         }
 
         function animateLogs() {
@@ -321,67 +1191,90 @@
                 log.update();
                 log.draw();
             });
-            requestAnimationFrame(animateLogs);
+            animationFrameId = requestAnimationFrame(animateLogs);
         }
 
-        // Handle resizing
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            animateLogs();
+            initLogs();
         });
 
         initLogs();
         animateLogs();
 
-        // ==========================================================
-        // CRITICAL RED ALERT THEME LOGIC
-        // Every 12 seconds, flashes the red attack indicators.
-        // ==========================================================
+        // ===============================
+        // Red alert sync every 10s
+        // ===============================
         const body = document.body;
         const metrics = document.getElementById('sysMetrics');
         const logoBorder = document.getElementById('navLogoBorder');
+        const logoIcon = document.getElementById('navLogoIcon');
         const footerConn = document.getElementById('footerConn');
+        const alertBanner = document.getElementById('alertBanner');
 
-        function activateRedAlert() {
-            body.classList.add('alert-active');
-            
-            // Core SOC UI components react
-            metrics.innerHTML = `<div>> NETWORK_SCAN: RUNNING</div><div>> LOG_CORRELATION: NOMINAL</div><div class="text-red-600 font-bold">> ALERT_STATUS:</div><div>> ML_CONFIDENCE: 96.8% [C]</div>`;
-            logoBorder.style.borderColor = '#dc2626';
-            footerConn.style.color = '#dc2626';
-            footerConn.innerText = '';
+        let alertRunning = false;
 
-            // Make some background logs turn red
-            logs.slice(0, 15).forEach(log => {
-                log.attackPulse = true;
-                log.text = " TCP path anomaly matching SQLi fuzzy logic. MITIGATION INITIATED.";
-                log.speed *= 2; // Speed up alert logs
-            });
-
-            // Revert back to cyan after 2.5 seconds
-            setTimeout(() => {
-                body.classList.remove('alert-active');
-                
-                // Reset Metrics
-                metrics.innerHTML = `<div>> NETWORK_SCAN: RUNNING</div><div>> LOG_CORRELATION: NOMINAL</div><div>> ALERT_STATUS: MONITORING</div><div>> ML_CONFIDENCE: 96.8% [C]</div>`;
-                logoBorder.style.borderColor = '#06b6d4';
-                footerConn.style.color = '#06b6d4';
-                footerConn.innerText = 'CONNECTION';
-                
-                // Reset modified background logs
-                logs.slice(0, 15).forEach(log => {
-                    log.attackPulse = false;
-                    log.text = logContent[Math.floor(Math.random() * logContent.length)];
-                    log.speed /= 2;
-                });
-
-            }, 2500); // 2.5 second duration for red alert flash
+        function setNormalMetrics() {
+            metrics.innerHTML = `
+                <div>> NETWORK_SCAN: RUNNING</div>
+                <div>> LOG_CORRELATION: NOMINAL</div>
+                <div>> ALERT_STATUS: MONITORING</div>
+                <div>> ML_CONFIDENCE: 96.8% [C]</div>
+            `;
         }
 
-        // Initialize Red Alerts (every 12 seconds)
-        setInterval(activateRedAlert, 12000);
+        function setAlertMetrics() {
+            metrics.innerHTML = `
+                <div class="metric-pulse text-red-400 font-bold">> NETWORK_SCAN: LOCKED</div>
+                <div class="metric-pulse text-red-400 font-bold">> LOG_CORRELATION: THREAT_MATCH</div>
+                <div class="metric-pulse text-red-500 font-bold">> ALERT_STATUS: CRITICAL</div>
+                <div class="metric-pulse text-red-300 font-bold">> ML_CONFIDENCE: 97.2% [HOSTILE]</div>
+            `;
+        }
 
+        function activateRedAlert() {
+            if (alertRunning) return;
+            alertRunning = true;
+
+            body.classList.add('alert-active');
+            alertBanner.classList.add('show');
+
+            setAlertMetrics();
+            logoBorder.style.borderColor = '#dc2626';
+            logoIcon.style.color = '#dc2626';
+            footerConn.style.color = '#dc2626';
+            footerConn.innerText = 'ALERT';
+
+            logs.slice(0, 18).forEach((log, index) => {
+                log.attackPulse = true;
+                log.text = attackLogContent[index % attackLogContent.length];
+                log.speed = log.baseSpeed * 2.2;
+                log.x = 20 + Math.random() * 140;
+            });
+
+            setTimeout(() => {
+                body.classList.remove('alert-active');
+                alertBanner.classList.remove('show');
+
+                setNormalMetrics();
+                logoBorder.style.borderColor = '#06b6d4';
+                logoIcon.style.color = '#22d3ee';
+                footerConn.style.color = '#06b6d4';
+                footerConn.innerText = 'CONNECTION';
+
+                logs.slice(0, 18).forEach(log => {
+                    log.attackPulse = false;
+                    log.text = logContent[Math.floor(Math.random() * logContent.length)];
+                    log.speed = log.baseSpeed;
+                });
+
+                alertRunning = false;
+            }, 2600);
+        }
+
+        setNormalMetrics();
+        setInterval(activateRedAlert, 10000);
     </script>
 </body>
 </html>
